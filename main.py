@@ -18,7 +18,6 @@ Commannds.
 """
 import typer
 import requests
-from pprint import pprint
 
 app = typer.Typer()
 
