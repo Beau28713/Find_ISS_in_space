@@ -37,6 +37,6 @@ You can also use Typers built in help fuction from the CLI.
           get-current-location  Prints out the current longitude and latitud...
           get-people-craft      Prints out who is currently in space and the what...
           
-# Requirments
-Typer
+# Requirements
+Typer  
 Requests
