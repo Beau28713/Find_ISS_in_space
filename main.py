@@ -1,41 +1,52 @@
-import json
+"""
+Uses the http://open-notify.org/Open-Notify-API
+To retieve the current location of the ISS space station and 
+who is currently in space and what space craft they are on.
+
+Uses the CLI libray Typer for easier command line interfaces by using
+Commannds.
+
+    Commands:
+     1. get-current-location
+     2. get-people-craft
+
+     Ex.
+      input -> python main.py get-current-location
+        
+      output -> 'The ISS latitude position is : -43.4396'
+      output -> 'The ISS longitude position is : -41.7107'
+"""
+import typer
 import requests
 from pprint import pprint
 
-def get_request() -> dict: 
-    """Get request from url
-    Print's the staus off the connection.
-    save data to json file
-    return's the request in a json format using the built in json decoder in the request library.
-    """
+app = typer.Typer()
+
+@app.command()
+def get_people_craft(): 
+    """Prints out who is currently in space and the what space craft they are on """
+
     returned_data = requests.get("http://api.open-notify.org/astros.json")
 
-    print(f"The status code is: {returned_data.status_code}")
+    typer.echo(f"The status code is: {returned_data.status_code}")
 
-    data = returned_data.text # put in string format to be writen to file
+    data_dict = returned_data.json()
 
-    with open("j_data.json", "w") as file:
-        json.dump(data, file)
+    for people in data_dict["people"]:
+        typer.echo(f"{people['name']} is on the {people['craft']}")
 
-    return returned_data.json()
+@app.command()
+def get_current_location():
+    """Prints out the current longitude and latitud location of the ISS space station"""
 
-def print_data(data_obj: dict):
-    """Create a formated string of the json data
-    dump it to a string"""
+    returned_data = requests.get("http://api.open-notify.org/iss-now.json")
 
-    text = json.dumps(data_obj, sort_keys=True, indent=4)
-    print(text)
+    typer.echo(f"The status code is: {returned_data.status_code}")
 
-def people_craft(data_obj: dict):
-    for people in data_obj["people"]:
-        print(f"{people['name']} is on the {people['craft']}")
-
-def main():
-    data = get_request()
-    # print_data(data)
-    people_craft(data)
-
+    data_dict = returned_data.json()
+    typer.echo(f'The ISS latitude position is : {data_dict["iss_position"]["latitude"]}')
+    typer.echo(f'The ISS longitude position is : {data_dict["iss_position"]["longitude"]}')
 
 
 if __name__ == "__main__":
-    main()
+    app()
