@@ -19,9 +19,9 @@ Commannds.
 import typer
 import requests
 
-app = typer.Typer()
+iss = typer.Typer()
 
-@app.command()
+@iss.command()
 def get_people_craft(): 
     """Prints out who is currently in space and the what space craft they are on """
 
@@ -34,7 +34,7 @@ def get_people_craft():
     for people in data_dict["people"]:
         typer.echo(f"{people['name']} is on the {people['craft']}")
 
-@app.command()
+@iss.command()
 def get_current_location():
     """Prints out the current longitude and latitud location of the ISS space station"""
 
@@ -48,4 +48,4 @@ def get_current_location():
 
 
 if __name__ == "__main__":
-    app()
+    iss()
