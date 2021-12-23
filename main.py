@@ -25,7 +25,7 @@ iss = typer.Typer()
 def get_people_craft(): 
     """Prints out who is currently in space and the what space craft they are on """
     try:
-        returned_data = requests.get("http://api.open-notify.org/astros.json")
+        returned_data = requests.get("http://api.openotify.org/astros.json")
 
         typer.echo(f"The status code is: {returned_data.status_code}\n")
 
@@ -50,9 +50,14 @@ def get_current_location():
 
         data_dict = returned_data.json()
 
-        typer.echo(f"the unix time stamp is {data_dict['timestamp']}")
-        typer.echo(f'The ISS latitude position is : {data_dict["iss_position"]["latitude"]}')
-        typer.echo(f'The ISS longitude position is : {data_dict["iss_position"]["longitude"]}')
+        map_data = requests.get(f"https://api.wheretheiss.at/v1/coordinates/{data_dict['iss_position']['latitude']},{data_dict['iss_position']['longitude']}")
+
+        map_dict = map_data.json()
+
+        typer.echo(f"The ISS latitude position is : {data_dict['iss_position']['latitude']}")
+        typer.echo(f"The ISS longitude position is : {data_dict['iss_position']['longitude']}")
+        typer.echo(f"current map location is {map_dict['timezone_id']}")
+        typer.echo(f"Country code is {map_dict['country_code']}")
         typer.echo("***Note negative numbers represent South latitude and West Longitude and positive represents North and East***")
 
     except BaseException as error:
