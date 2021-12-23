@@ -1,5 +1,5 @@
 """
-Uses the http://open-notify.org/Open-Notify-API
+Uses API's http://open-notify.org/Open-Notify-API and https://wheretheiss.at/w/developer
 To retieve the current location of the ISS space station and 
 who is currently in space and what space craft they are on.
 
@@ -38,11 +38,12 @@ def get_people_craft():
         typer.echo("The error was:")
         typer.echo(f"{error}")
 
-    
 
 @iss.command()
 def get_current_location():
-    """Prints out the current longitude and latitud location of the ISS space station"""
+    """Prints out the current longitude and latitude 
+    location of the ISS space station along with its map
+    and country code location"""
     try:
         returned_data = requests.get("http://api.open-notify.org/iss-now.json")
 
