@@ -25,18 +25,24 @@ iss = typer.Typer()
 def get_people_craft(): 
     """Prints out who is currently in space and the what space craft they are on """
     try:
-        returned_data = requests.get("http://api.openotify.org/astros.json")
+        people_data = requests.get("http://api.open-notify.org/astros.json", timeout=5)
+        people_data.raise_for_status()
 
-        typer.echo(f"The status code is: {returned_data.status_code}\n")
+        typer.echo(f"The status code is: {people_data.status_code}\n")
 
-        data_dict = returned_data.json()
+        people_dict = people_data.json()
 
-        for people in data_dict["people"]:
+        for people in people_dict["people"]:
             typer.echo(f"{people['name']} is on the {people['craft']}")
     
-    except BaseException as error:
-        typer.echo("The error was:")
-        typer.echo(f"{error}")
+    except requests.exceptions.HTTPError as httperr:
+        typer.echo(httperr)
+    except requests.exceptions.Timeout as timerr:
+        typer.echo(timerr)
+    except requests.exceptions.ConnectionError as conerr:
+        typer.echo(conerr)
+    except requests.exceptions.RequestException as err:
+        print(err)
 
 
 @iss.command()
@@ -45,25 +51,31 @@ def get_current_location():
     location of the ISS space station along with its map
     and country code location"""
     try:
-        returned_data = requests.get("http://api.open-notify.org/iss-now.json")
+        location_data = requests.get("http://api.open-notify.org/iss-now.json")
+        location_data.raise_for_status()
 
-        typer.echo(f"The status code is: {returned_data.status_code}\n")
+        typer.echo(f"The status code is: {location_data.status_code}\n")
 
-        data_dict = returned_data.json()
+        location_dict = location_data.json()
 
-        map_data = requests.get(f"https://api.wheretheiss.at/v1/coordinates/{data_dict['iss_position']['latitude']},{data_dict['iss_position']['longitude']}")
+        map_data = requests.get(f"https://api.wheretheiss.at/v1/coordinates/{location_dict['iss_position']['latitude']},{location_dict['iss_position']['longitude']}")
 
         map_dict = map_data.json()
 
-        typer.echo(f"The ISS latitude position is : {data_dict['iss_position']['latitude']}")
-        typer.echo(f"The ISS longitude position is : {data_dict['iss_position']['longitude']}")
+        typer.echo(f"The ISS latitude position is : {location_dict['iss_position']['latitude']}")
+        typer.echo(f"The ISS longitude position is : {location_dict['iss_position']['longitude']}")
         typer.echo(f"current map location is {map_dict['timezone_id']}")
         typer.echo(f"Country code is {map_dict['country_code']}")
         typer.echo("***Note negative numbers represent South latitude and West Longitude and positive represents North and East***")
 
-    except BaseException as error:
-        typer.echo("The error was:")
-        typer.echo(f"{error}")
+    except requests.exceptions.HTTPError as httperr:
+        typer.echo(httperr)
+    except requests.exceptions.Timeout as timerr:
+        typer.echo(timerr)
+    except requests.exceptions.ConnectionError as conerr:
+        typer.echo(conerr)
+    except requests.exceptions.RequestException as err:
+        print(err)
 
 if __name__ == "__main__":
     iss()
